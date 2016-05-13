@@ -14,9 +14,17 @@ var buffer 		= require('vinyl-buffer'); 			// Vinyl stream support
 var watchify 	= require('watchify'); 				// Watchify for source changes
 var merge 		= require('utils-merge'); 			// Object merge tool
 var duration 	= require('gulp-duration'); 		// Time aspects of your gulp process
-var sass        = require('gulp-sass');
-var autoprefix 	= require('gulp-autoprefixer');
 
+var config = {
+	js: {
+		src   : 'app.js',
+		watch : './lib/js/',
+		output : {
+			dir  : './dist/',
+			file : 'build.js'
+		}
+	}
+}
 
 // Error reporting function
 function mapError(err) {
@@ -42,12 +50,12 @@ function bundle(bundler) {
 
 	bundler.bundle()
 		.on('error', mapError) 										// Map error reporting
-		.pipe(source('app.js')) 									// Set source name
+		.pipe(source(config.js.src)) 								// Set source name
 		.pipe(buffer()) 											// Convert to gulp pipeline
-		.pipe(rename('build.js')) 									// Rename the output file
+		.pipe(rename(config.js.output.file)) 						// Rename the output file
 		.pipe(sourcemaps.init({loadMaps: true})) 					// Extract the inline sourcemaps
 		.pipe(sourcemaps.write('./map')) 							// Set folder for sourcemaps to output to
-		.pipe(gulp.dest('./build/')) 								// Set the output folder
+		.pipe(gulp.dest(config.js.output.dir) 						// Set the output folder
 		.pipe(notify({
 			message: 'Generated file: <%= file.relative %>',
 		})) 														// Output the file being created
